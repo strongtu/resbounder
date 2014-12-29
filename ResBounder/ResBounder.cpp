@@ -84,7 +84,7 @@ bool PngOutFile(const wchar_t * src, const wchar_t * dst)
     ws += _T("\"");
     ws += dst;
     ws += + _T("\" ");
-    ws += _T("/y /d0 /s0 /mincodes0");
+    ws += _T("/knpTc /y /d0 /s0 /mincodes0");
 
     PROCESS_INFORMATION ProcessInfo;
     STARTUPINFO StartupInfo;
@@ -186,7 +186,8 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
     do
     {
         if (!wcscmp(fileData.cFileName, _T(".")) ||
-            !wcscmp(fileData.cFileName, _T("..")))
+            !wcscmp(fileData.cFileName, _T("..")) ||
+			(fileData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN))
         {
             continue;
         }
@@ -209,9 +210,14 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
             }
             BoundDir(srcFilePath, dstFilePath, backupFilePath);
         }
-        else if (IsTypeFile(fileData.cFileName, _T(".png")) ||
+        else if (IsTypeFile(fileData.cFileName, _T(".png")) && !IsTypeFile(fileData.cFileName, _T(".9.png")) ||
                  IsTypeFile(fileData.cFileName, _T(".bmp")))
         {
+			if (!wcscmp(srcFilePath.c_str(), dstFilePath.c_str()) && !backupFilePath.empty())//?????идик?,?ииб└?бдY
+			{
+				CopyFile(srcFilePath.c_str(), backupFilePath.c_str(), FALSE);
+			}
+
             if (PngOutFile(srcFilePath.c_str(), dstFilePath.c_str()) &&
                 IsTypeFile(fileData.cFileName, _T(".bmp")))
             {
@@ -219,16 +225,19 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
                 MoveFile(pngOutFile.c_str(), dstFilePath.c_str());
             }
 
-			if (IsFileSmall(srcFilePath.c_str(), dstFilePath.c_str()))
+			if (wcscmp(srcFilePath.c_str(), dstFilePath.c_str()))//????2??идик?,иж?3yбфиож╠?????
 			{
-				if (!backupFilePath.empty())
+				if (IsFileSmall(srcFilePath.c_str(), dstFilePath.c_str()))
 				{
-					CopyFile(srcFilePath.c_str(), backupFilePath.c_str(), FALSE);
+					if (!backupFilePath.empty())
+					{
+						CopyFile(srcFilePath.c_str(), backupFilePath.c_str(), FALSE);
+					}
 				}
-			}
-			else
-			{
-				DeleteFile(dstFilePath.c_str());
+				else
+				{
+					DeleteFile(dstFilePath.c_str());
+				}
 			}
         }
         else if (IsTypeFile(fileData.cFileName, _T(".gft")))
