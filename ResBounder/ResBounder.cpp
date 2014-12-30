@@ -213,7 +213,7 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
         else if (IsTypeFile(fileData.cFileName, _T(".png")) && !IsTypeFile(fileData.cFileName, _T(".9.png")) ||
                  IsTypeFile(fileData.cFileName, _T(".bmp")))
         {
-			if (!wcscmp(srcFilePath.c_str(), dstFilePath.c_str()) && !backupFilePath.empty())//?????¨¤¨ª?,?¨¨¡À?¡¤Y
+			if (!wcscmp(srcFilePath.c_str(), dstFilePath.c_str()) && !backupFilePath.empty())//æºç›®å½•å’Œç›®æ ‡ç›®å½•ç›¸ç­‰,äº‹å…ˆå¤‡ä»½
 			{
 				CopyFile(srcFilePath.c_str(), backupFilePath.c_str(), FALSE);
 			}
@@ -225,7 +225,7 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
                 MoveFile(pngOutFile.c_str(), dstFilePath.c_str());
             }
 
-			if (wcscmp(srcFilePath.c_str(), dstFilePath.c_str()))//????2??¨¤¨ª?,¨¦?3y¡ä¨®¦Ì?????
+			if (wcscmp(srcFilePath.c_str(), dstFilePath.c_str()))//æºç›®å½•å’Œç›®æ ‡ç›®å½•ä¸ç›¸ç­‰
 			{
 				if (IsFileSmall(srcFilePath.c_str(), dstFilePath.c_str()))
 				{
