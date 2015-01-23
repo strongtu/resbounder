@@ -20,6 +20,9 @@ struct GFTHeader
     DWORD   offset;
 };
 
+static bool replaceFlag =  false;
+
+
 wstring g_PngOut;
 
 bool CreateDir(wstring dir)
@@ -103,6 +106,8 @@ bool PngOutFile(const wchar_t * src, const wchar_t * dst)
         return false;
     }
 }
+
+//
 
 bool ReplaceGFTInnerImage(const wchar_t * gftFile, const wchar_t * imgFile)
 {
@@ -194,6 +199,12 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
 
         wstring srcFilePath = src + _T("\\") + fileData.cFileName;
         wstring dstFilePath = dst + _T("\\") + fileData.cFileName;
+		
+		if(replaceFlag)
+		{
+			dstFilePath += L".out.png";
+		}
+
         wstring backupFilePath;
         
         if (!backup.empty())
@@ -231,13 +242,20 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
 				{
 					if (!backupFilePath.empty())
 					{
-						CopyFile(srcFilePath.c_str(), backupFilePath.c_str(), FALSE);
-					}
+					CopyFile(srcFilePath.c_str(), backupFilePath.c_str(), FALSE);
 				}
-				else
+
+				if(replaceFlag)
 				{
+					//override source file
+					CopyFile(dstFilePath.c_str(), srcFilePath.c_str(), FALSE);
+					//delete the dst file
 					DeleteFile(dstFilePath.c_str());
 				}
+			}
+			else
+			{
+				DeleteFile(dstFilePath.c_str());
 			}
         }
         else if (IsTypeFile(fileData.cFileName, _T(".gft")))
@@ -264,6 +282,15 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
 				{
 					CopyFile(srcFilePath.c_str(), backupFilePath.c_str(), FALSE);
 				}
+
+				if(replaceFlag)
+				{
+					//override source file
+					CopyFile(dstFilePath.c_str(), srcFilePath.c_str(), FALSE);
+					//delete the dst file
+					DeleteFile(dstFilePath.c_str());
+				}
+
 			}
 			else
 			{
@@ -307,6 +334,12 @@ int _tmain(int argc, _TCHAR* argv[])
     {
         backupDir = argv[3];
     }
+
+	if(srcDir == dstDir)
+	{
+		printf("source dir is same to dest dir!\r\n");
+		replaceFlag =  true;
+	}
 
     BoundDir(srcDir, dstDir, backupDir);
 	return 0;
