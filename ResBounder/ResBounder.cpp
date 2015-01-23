@@ -200,10 +200,10 @@ void BoundDir(std::wstring src, std::wstring dst, std::wstring backup)
         wstring srcFilePath = src + _T("\\") + fileData.cFileName;
         wstring dstFilePath = dst + _T("\\") + fileData.cFileName;
 		
-		if(replaceFlag)
-		{
-			dstFilePath += L".out.png";
-		}
+				if( (replaceFlag) && (!(fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)))
+				{
+					dstFilePath += L".out.png";
+				}
 
         wstring backupFilePath;
         
